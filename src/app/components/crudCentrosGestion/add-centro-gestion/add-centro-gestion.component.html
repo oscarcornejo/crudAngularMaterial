@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Crear Centro de Gestión</h2>
+
+<mat-dialog-content>
+    <form (ngSubmit)="addCentroGestion()" #forma="ngForm">
+        <div>
+            <mat-form-field>
+                <input matInput [(ngModel)]="centro.idCentroGestion" name="idCentroGestion" type="text" placeholder="Id Centro Gestión" required>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field>
+                <input matInput [(ngModel)]="centro.descripcion" name="descripcion" type="text" placeholder="Descripción Centro Gestión" required>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput [(ngModel)]="centro.duenoObra" name="duenoObra" type="text" placeholder="Dueño de Obra" required>
+            </mat-form-field>
+        </div>
+
+        <div>
+            <mat-form-field>
+                <input matInput [(ngModel)]="centro.rutEjecucion" name="rutEjecucion" type="text" placeholder="Rut Ejecución" required>
+            </mat-form-field>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button (click)="cerrarModal()">Cancelar</button>
+    <button [disabled]="!forma.valid" mat-raised-button mat-primary color="primary" (click)="addCentroGestion()">Agregar</button>
+</mat-dialog-actions>

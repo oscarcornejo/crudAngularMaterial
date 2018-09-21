@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs'
 import { AddCentroGestionComponent } from '../crudCentrosGestion/add-centro-gestion/add-centro-gestion.component';
 import { EditarCentroGestionComponent } from '../crudCentrosGestion/editar-centro-gestion/editar-centro-gestion.component';
 import { BorrarCentroGestionComponent } from '../crudCentrosGestion/borrar-centro-gestion/borrar-centro-gestion.component';
+import { filter } from 'rxjs/internal/operators/filter';
 
 @Component({
   selector: 'app-centros-gestion',
@@ -17,6 +18,10 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
   // Seting Angular Material
   displayedColumns: string[] = ['id', 'descripcion', 'duenoObra', 'rut', 'opciones'];
   public dataSource = new MatTableDataSource<CentrosData>();
+  public data: any;
+
+  //declaracion de dialogos
+  FormAdd: MatDialogRef<AddCentroGestionComponent>
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -26,10 +31,9 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
   index               : number;
   id                  : number;
 
-  constructor(
-    private api: ApiCentrosService,
-    public dialog: MatDialog
-    ) { }
+  constructor(private api: ApiCentrosService,public dialog: MatDialog){
+
+  }
 
   ngOnInit() {
     this.cargarCentros();
@@ -72,28 +76,11 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
     this.paginator._intl.getRangeLabel = RangeLabel;
   }
 
-  test(){
-
-    let obj = {adicionalesAprobados: 0,
-              adicionalesEstimados: 0,
-              codigo: 0,
-              descripcion: "wewewewewewe",
-              duenoObra: "efdfdfdfdfd",
-              fecInicio: null,
-              fecTermino: null,
-              idCentroGestion: 1211212,
-              idEstCentroGestion: 0,
-              idMandante: 0,
-              presupuestoContrato: 0,
-              rutEjecucion: "34343343434-23"};
-    let newData: any = [];
-    newData.push(obj);
-    newData.push(obj);
-    newData.push(obj);
-    newData.push(obj);
-    this.dataSource = new MatTableDataSource(newData);
+  setData(){
+    //tomar todo lo hay en data y llevarlo a dataSource
+    console.log("creamos dataSource con data ->", this.data);
+    this.dataSource = new MatTableDataSource(this.data);
     this.setPaginator();
-    console.log('second:', this.dataSource.data);
   }
 
 
@@ -101,27 +88,39 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
   cargarCentros(){
     console.log("cargarCentros()");
     this.api.getCentros().subscribe( (data: any) => {
-      this.dataCentros = data;
-      this.dataSource.data = data;
-      console.log('La data1 es:', this.dataCentros);
-      console.log('La data2 es:', this.dataSource.data);
+      //data acumula todo dato que el servicio tenga
+      this.data = data;
+      //iniciamos dataSource
+      this.setData();
     }, error => {
       console.log(error);
     });
   }
 
   // Agrega un Centro
-  addCentros(): void {
-    const dialogRef = this.dialog.open( AddCentroGestionComponent, {
+  addCentros(){
+
+    this.FormAdd = this.dialog.open(AddCentroGestionComponent, {
       width: '350px',
       data: {}
     });
 
-    dialogRef.afterClosed().subscribe( result => {
-      console.log('Dialog closed');
-      console.log(result);
-      this.cargarCentros();
+    this.FormAdd.afterClosed().pipe(
+      filter(res => res)
+    ).subscribe(res => {
+      //recibe data desde dialogo add
+      //controlar aquí si dialogo tiene algún error
+      let target: any = {};
+      target = res.centroGestion[0];
+
+      //al parecer el servicio no trae los datos actualizados, por ende agrego el registro con push al array
+      //que estamos tomando como recurso para iniciar el dataSource
+      
+      this.data.push(target);
+      this.setData();
     });
+
+
   }
 
   // Editar un Centro

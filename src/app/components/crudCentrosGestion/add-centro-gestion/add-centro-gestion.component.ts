@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, AfterViewInit, EventEmitter } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatTable } from '@angular/material';
 import { ApiCentrosService } from '../../../services/api-centros.service';
@@ -29,11 +29,14 @@ export class AddCentroGestionComponent implements OnInit {
     rutEjecucion        : ""
   }
 
+  public dataSave: any;
+  Success = new EventEmitter();
+
   constructor(
-    public dialogRef: MatDialogRef<AddCentroGestionComponent>,
+    private dialogRef: MatDialogRef<AddCentroGestionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private centrosService: ApiCentrosService
-    ) {} 
+    ) {}
 
   ngOnInit() {}
 
@@ -43,17 +46,21 @@ export class AddCentroGestionComponent implements OnInit {
       .subscribe( (data: CentrosData) => {
         // window.location.reload();
         // this.cargarCentros();
+        this.dataSave = data;
         console.log("Los datos agregados son:", data);
+        this.dialogRef.close(this.dataSave);
       },
       error => {
-        console.log(error);
+        console.log("error al guardar", error);
+        this.dialogRef.close(this.dataSave);
       });
-    this.dialogRef.close("Centro de Gestión Creado!");
+
   }
 
   // Cierre de Modal
   cerrarModal(){
-    this.dialogRef.close('Cierre de Modal Agregar!');
+    console.log("cerrarModal()");
+    this.dialogRef.close(false);
   }
 
 }

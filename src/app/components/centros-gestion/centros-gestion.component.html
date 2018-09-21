@@ -1,21 +1,25 @@
 <div class="row mt-5">
-    <div class="col-sm-10 col-md-10">
+    <div class="col-sm-8 col-md-8">
         <mat-form-field>
             <input matInput type="text" (keyup)="doFilter($event.target.value)" placeholder="Buscar...">
         </mat-form-field>
     </div>
-    <div class="col-sm-2 col-md-2">
-        <button mat-raised-button color="primary" (click)="addCentros()">  
+    <div class="col-sm-4 col-md-4">
+        <button mat-raised-button color="primary" (click)="addCentros()">
         <mat-icon>add</mat-icon>
         <span>Agregar</span>
       </button>
+
+        <button  mat-raised-button color="accent"  (click)="test()">
+          <span>just test</span>
+        </button>
     </div>
 
 
     <mat-card *ngIf="mostrarMensajeFiltro">No existen resultados</mat-card>
     <div class="col-sm-12 col-md-12">
         <div *ngIf="dataSource" class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource" matSort>
+            <table mat-table [(dataSource)]="dataSource" matSort>
 
                 <!-- Position Column -->
                 <ng-container matColumnDef="id">
@@ -49,7 +53,7 @@
                   <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
 
-                        <button mat-icon-button color="accent" (click)="deleteCentros(i, element.idCentroGestion, element.descripcion, element.duenoObra, element.rutEjecucion)"> 
+                        <button mat-icon-button color="accent" (click)="deleteCentros(i, element.idCentroGestion, element.descripcion, element.duenoObra, element.rutEjecucion)">
                   <mat-icon aria-label="Delete">delete</mat-icon>
                 </button>
                     </td>

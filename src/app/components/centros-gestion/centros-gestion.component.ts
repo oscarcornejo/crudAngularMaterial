@@ -13,11 +13,11 @@ import { BorrarCentroGestionComponent } from '../crudCentrosGestion/borrar-centr
   styleUrls: ['./centros-gestion.component.scss']
 })
 export class CentrosGestionComponent implements OnInit, AfterViewInit {
-  
+
   // Seting Angular Material
   displayedColumns: string[] = ['id', 'descripcion', 'duenoObra', 'rut', 'opciones'];
-  dataSource = new MatTableDataSource<CentrosData>();
-  
+  public dataSource = new MatTableDataSource<CentrosData>();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -27,7 +27,7 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
   id                  : number;
 
   constructor(
-    private api: ApiCentrosService, 
+    private api: ApiCentrosService,
     public dialog: MatDialog
     ) { }
 
@@ -47,9 +47,12 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
 
   // Paginador de Tabla Centros
   ngAfterViewInit(){
+    this.setPaginator();
+  }
+
+  setPaginator(){
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-
     const RangeLabel = (page: number, pageSize: number, length: number) => {
       if (length == 0 || pageSize == 0) { return `0 de ${length}`; }
       length = Math.max(length, 0);
@@ -69,8 +72,34 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
     this.paginator._intl.getRangeLabel = RangeLabel;
   }
 
+  test(){
+
+    let obj = {adicionalesAprobados: 0,
+              adicionalesEstimados: 0,
+              codigo: 0,
+              descripcion: "wewewewewewe",
+              duenoObra: "efdfdfdfdfd",
+              fecInicio: null,
+              fecTermino: null,
+              idCentroGestion: 1211212,
+              idEstCentroGestion: 0,
+              idMandante: 0,
+              presupuestoContrato: 0,
+              rutEjecucion: "34343343434-23"};
+    let newData: any = [];
+    newData.push(obj);
+    newData.push(obj);
+    newData.push(obj);
+    newData.push(obj);
+    this.dataSource = new MatTableDataSource(newData);
+    this.setPaginator();
+    console.log('second:', this.dataSource.data);
+  }
+
+
   // Carga de Listado de Centros de Gestión
   cargarCentros(){
+    console.log("cargarCentros()");
     this.api.getCentros().subscribe( (data: any) => {
       this.dataCentros = data;
       this.dataSource.data = data;
@@ -91,9 +120,10 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe( result => {
       console.log('Dialog closed');
       console.log(result);
+      this.cargarCentros();
     });
   }
-  
+
   // Editar un Centro
   editarCentro(centro: CentrosData){
     const dialogRef = this.dialog.open( EditarCentroGestionComponent, {
@@ -117,14 +147,14 @@ export class CentrosGestionComponent implements OnInit, AfterViewInit {
       width: '500px',
       data: {
         index: index,
-        id: id, 
-        descripcion: descripcion, 
-        duenoObra: duenoObra, 
+        id: id,
+        descripcion: descripcion,
+        duenoObra: duenoObra,
         rut: rut
       }
-      
+
     });
-  
+
     dialogRef.afterClosed().subscribe( result => {
       console.log('Dialog closed');
       console.log(result);
